@@ -3,6 +3,8 @@
 #include "OperationBigBang.h"
 #include "OperationBigBangPlayerController.h"
 #include "AI/Navigation/NavigationSystem.h"
+#include "Runtime/Core/Public/GenericPlatform/GenericPlatformMath.h"
+#include "Runtime/Core/Public/Math/UnrealMathUtility.h"
 
 AOperationBigBangPlayerController::AOperationBigBangPlayerController()
 {
@@ -19,6 +21,8 @@ void AOperationBigBangPlayerController::PlayerTick(float DeltaTime)
 	{
 		MoveToMouseCursor();
 	}
+
+	
 }
 
 void AOperationBigBangPlayerController::SetupInputComponent()
@@ -28,6 +32,9 @@ void AOperationBigBangPlayerController::SetupInputComponent()
 
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AOperationBigBangPlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AOperationBigBangPlayerController::OnSetDestinationReleased);
+
+	InputComponent->BindAxis("LeftThumbXAxis", this, &AOperationBigBangPlayerController::RotateSelf);
+	InputComponent->BindAxis("LeftThumbYAxis", this, &AOperationBigBangPlayerController::RotateSelf);
 
 	// support touch devices 
 	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AOperationBigBangPlayerController::MoveToTouchLocation);
@@ -75,6 +82,29 @@ void AOperationBigBangPlayerController::SetNewMoveDestination(const FVector Dest
 			NavSys->SimpleMoveToLocation(this, DestLocation);
 		}
 	}
+}
+
+void AOperationBigBangPlayerController::RotateSelf(float val)
+{
+	this->RotateSelf();
+}
+
+void AOperationBigBangPlayerController::RotateSelf()
+{
+	float x = InputComponent->GetAxisValue("LeftThumbXAxis");
+	float y = InputComponent->GetAxisValue("LeftThumbYAxis");
+	float angle = FMath::UnwindDegrees(FMath::RadiansToDegrees(FGenericPlatformMath::Atan2(x, y)));
+
+	FRotator rotation = FRotator(0.0f, angle, 0.0f);
+	APawn* const Pawn = GetPawn();
+	if (Pawn)
+	{
+		Pawn->SetActorRotation(rotation);
+		//Pawn->SetActorScale3D(FVector(1.0f, 1.0f, angle));
+	}
+	
+
+
 }
 
 void AOperationBigBangPlayerController::OnSetDestinationPressed()
