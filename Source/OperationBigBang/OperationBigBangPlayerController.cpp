@@ -102,9 +102,6 @@ void AOperationBigBangPlayerController::RotateSelf()
 		Pawn->SetActorRotation(rotation);
 		//Pawn->SetActorScale3D(FVector(1.0f, 1.0f, angle));
 	}
-	
-
-
 }
 
 void AOperationBigBangPlayerController::OnSetDestinationPressed()
