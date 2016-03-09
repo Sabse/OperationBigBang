@@ -29,6 +29,10 @@ protected:
 	/** Navigate player to the given world location. */
 	void SetNewMoveDestination(const FVector DestLocation);
 
+	/** Rotate Mortar around the local z-axis. */
+	void RotateSelf(float val);
+	void RotateSelf();
+
 	/** Input handlers for SetDestination action. */
 	void OnSetDestinationPressed();
 	void OnSetDestinationReleased();
