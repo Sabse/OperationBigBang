@@ -15,6 +15,10 @@ protected:
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
 
+	FVector2D oldLeftThumbAngleVector = FVector2D(0.0f, 1.0f);
+	float fVelocity = 0.0f;
+	float fAcceleration = 0.0f;
+
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
@@ -30,8 +34,8 @@ protected:
 	void SetNewMoveDestination(const FVector DestLocation);
 
 	/** Rotate Mortar around the local z-axis. */
-	void RotateSelf(float val);
-	void RotateSelf();
+	void OnLeftStick(float val);
+	void OnLeftStick();
 
 	/** Input handlers for SetDestination action. */
 	void OnSetDestinationPressed();

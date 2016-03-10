@@ -6,6 +6,6 @@
 #include "EngineMinimal.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(LogOperationBigBang, Log, All);
-
+DECLARE_LOG_CATEGORY_EXTERN(TestLog, Log, All);
 
 #endif

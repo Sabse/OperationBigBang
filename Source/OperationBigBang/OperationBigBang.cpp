@@ -6,4 +6,5 @@
 IMPLEMENT_PRIMARY_GAME_MODULE( FDefaultGameModuleImpl, OperationBigBang, "OperationBigBang" );
 
 DEFINE_LOG_CATEGORY(LogOperationBigBang)
+DEFINE_LOG_CATEGORY(TestLog)
  
