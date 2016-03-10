@@ -22,7 +22,19 @@ void AOperationBigBangPlayerController::PlayerTick(float DeltaTime)
 		MoveToMouseCursor();
 	}
 
-	
+	APawn* const Pawn = GetPawn();
+	if (Pawn)
+	{
+		FVector currentLocation = Pawn->GetActorLocation();
+		//fVelocity += fAcceleration * DeltaTime;
+		velocity.Y = acceleration.Y * DeltaTime;
+		velocity.X = acceleration.X * DeltaTime;
+		currentLocation.X += velocity.X;
+		currentLocation.Y += velocity.Y;
+		Pawn->SetActorLocation(currentLocation);
+		dampenAcceleration();
+		dampenVelocity();
+	}
 }
 
 void AOperationBigBangPlayerController::SetupInputComponent()
@@ -33,8 +45,12 @@ void AOperationBigBangPlayerController::SetupInputComponent()
 	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AOperationBigBangPlayerController::OnSetDestinationPressed);
 	InputComponent->BindAction("SetDestination", IE_Released, this, &AOperationBigBangPlayerController::OnSetDestinationReleased);
 
-	InputComponent->BindAxis("LeftThumbXAxis", this, &AOperationBigBangPlayerController::RotateSelf);
-	InputComponent->BindAxis("LeftThumbYAxis", this, &AOperationBigBangPlayerController::RotateSelf);
+	// Bind Stick Rotations
+	InputComponent->BindAxis("LeftThumbXAxis", this, &AOperationBigBangPlayerController::OnLeftStick);
+	InputComponent->BindAxis("LeftThumbYAxis", this, &AOperationBigBangPlayerController::OnLeftStick);
+
+	InputComponent->BindAxis("RightThumbXAxis", this, &AOperationBigBangPlayerController::OnRightStick);
+	InputComponent->BindAxis("RightThumbYAxis", this, &AOperationBigBangPlayerController::OnRightStick);
 
 	// support touch devices 
 	InputComponent->BindTouch(EInputEvent::IE_Pressed, this, &AOperationBigBangPlayerController::MoveToTouchLocation);
@@ -84,23 +100,128 @@ void AOperationBigBangPlayerController::SetNewMoveDestination(const FVector Dest
 	}
 }
 
-void AOperationBigBangPlayerController::RotateSelf(float val)
+void AOperationBigBangPlayerController::OnLeftStick(float val)
 {
-	this->RotateSelf();
+	this->OnLeftStick();
 }
 
-void AOperationBigBangPlayerController::RotateSelf()
+void AOperationBigBangPlayerController::OnLeftStick()
 {
-	float x = InputComponent->GetAxisValue("LeftThumbXAxis");
-	float y = InputComponent->GetAxisValue("LeftThumbYAxis");
-	float angle = FMath::UnwindDegrees(FMath::RadiansToDegrees(FGenericPlatformMath::Atan2(x, y)));
-
-	FRotator rotation = FRotator(0.0f, angle, 0.0f);
-	APawn* const Pawn = GetPawn();
-	if (Pawn)
+	FVector2D currentAngleVector(InputComponent->GetAxisValue("LeftThumbXAxis"),
+		InputComponent->GetAxisValue("LeftThumbYAxis"));
+	currentAngleVector.Normalize();
+	// Check if Left Thumbstick is released
+	if (currentAngleVector.Size() <= 0.05f && currentAngleVector.Size() >= -0.05f)
 	{
-		Pawn->SetActorRotation(rotation);
-		//Pawn->SetActorScale3D(FVector(1.0f, 1.0f, angle));
+		//Stick in Resting position
+		return;
+	}
+
+	float direction = 1.0f;
+	// Crossproduct == 0 is exactly 180 degree rotated | < 0 is right of the old vector | > 0 is left of the old vector.
+	float crossProd = FVector2D::CrossProduct(oldLeftThumbAngleVector, currentAngleVector);
+	if (crossProd < 0.0f)
+	{
+		direction = 1.0f;
+	}
+	else if (crossProd > 0.0f)
+	{
+		direction = -1.0f;
+	}
+	else
+	{
+		return;
+	}
+	// Determine delta angle
+	float deltaAngle = FMath::Acos(FVector2D::DotProduct(oldLeftThumbAngleVector, currentAngleVector));
+	//UE_LOG(TestLog, Error, TEXT("dA:%f"), deltaAngle);
+	float tempAccel = direction * deltaAngle * 25.0f;
+	//UE_LOG(TestLog, Error, TEXT("L:%d|N:%d|R:%d"), left, none, right);
+	//UE_LOG(TestLog, Error, TEXT("fAccel: %f|%f tAcc| deltaA: %f"), fAcceleration, tempAccel, deltaAngle);
+
+	acceleration.Y += tempAccel;
+	oldLeftThumbAngleVector = currentAngleVector;
+}
+
+void AOperationBigBangPlayerController::OnRightStick(float val)
+{
+	this->OnRightStick();
+}
+
+void AOperationBigBangPlayerController::OnRightStick()
+{
+	FVector2D currentAngleVector(	InputComponent->GetAxisValue("RightThumbXAxis"),
+									InputComponent->GetAxisValue("RightThumbYAxis"));
+	currentAngleVector.Normalize();
+	// Check if Left Thumbstick is released
+	if (currentAngleVector.Size() <= 0.05f && currentAngleVector.Size() >= -0.05f)
+	{
+		//Stick in Resting position
+		return;
+	}
+
+	float direction = 1.0f;
+	// Crossproduct == 0 is exactly 180 degree rotated | < 0 is right of the old vector | > 0 is left of the old vector.
+	float crossProd = FVector2D::CrossProduct(oldRightThumbAngleVector, currentAngleVector);
+	if (crossProd < 0.0f)
+	{
+		direction = 1.0f;
+	}
+	else if (crossProd > 0.0f)
+	{
+		direction = -1.0f;
+	}
+	else
+	{
+		return;
+	}
+	// Determine delta angle
+	float deltaAngle = FMath::Acos(FVector2D::DotProduct(oldRightThumbAngleVector, currentAngleVector));
+	// calc acceleration
+	float tempAccel = direction * deltaAngle * 25.0f;
+
+	acceleration.X += tempAccel;
+	oldRightThumbAngleVector = currentAngleVector;
+}
+
+void AOperationBigBangPlayerController::dampenVelocity()
+{
+	if (velocity.X <= 0.05f && velocity.X > -0.05f)
+	{
+		velocity.X = 0.0f;
+	}
+	else
+	{
+		velocity.X *= 0.95;
+	}
+
+	if (velocity.Y <= 0.05f && velocity.Y > -0.05f)
+	{
+		velocity.Y = 0.0f;
+	}
+	else
+	{
+		velocity.Y *= 0.95;
+	}
+}
+
+void AOperationBigBangPlayerController::dampenAcceleration()
+{
+	if (acceleration.X <= 0.05f && acceleration.X > -0.5f)
+	{
+		acceleration.X = 0.0f;
+	}
+	else
+	{
+		acceleration.X *= 0.95;
+	}
+	if (acceleration.Y <= 0.05f && acceleration.Y > -0.5f)
+	{
+		acceleration.Y = 0.0f;
+	}
+	else
+	{
+		acceleration.Y *= 0.95;
 	}
 }
 
