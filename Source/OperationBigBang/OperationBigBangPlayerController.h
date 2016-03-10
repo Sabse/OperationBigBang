@@ -46,8 +46,10 @@ protected:
 	void dampenVelocity();
 	void dampenAcceleration();
 	/** Input handlers for SetDestination action. */
-	void OnSetDestinationPressed();
-	void OnSetDestinationReleased();
+	void OnWPress();
+	void OnSPress();
+	void OnAPress();
+	void OnDPress();
 };
 
 

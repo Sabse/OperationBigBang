@@ -42,8 +42,10 @@ void AOperationBigBangPlayerController::SetupInputComponent()
 	// set up gameplay key bindings
 	Super::SetupInputComponent();
 
-	InputComponent->BindAction("SetDestination", IE_Pressed, this, &AOperationBigBangPlayerController::OnSetDestinationPressed);
-	InputComponent->BindAction("SetDestination", IE_Released, this, &AOperationBigBangPlayerController::OnSetDestinationReleased);
+	InputComponent->BindAction("WKeyPress", IE_Pressed, this, &AOperationBigBangPlayerController::OnWPress);
+	InputComponent->BindAction("SKeyPress", IE_Released, this, &AOperationBigBangPlayerController::OnSPress);
+	InputComponent->BindAction("AKeyPress", IE_Pressed, this, &AOperationBigBangPlayerController::OnAPress);
+	InputComponent->BindAction("DKeyPress", IE_Released, this, &AOperationBigBangPlayerController::OnDPress);
 
 	// Bind Stick Rotations
 	InputComponent->BindAxis("LeftThumbXAxis", this, &AOperationBigBangPlayerController::OnLeftStick);
@@ -225,14 +227,26 @@ void AOperationBigBangPlayerController::dampenAcceleration()
 	}
 }
 
-void AOperationBigBangPlayerController::OnSetDestinationPressed()
+void AOperationBigBangPlayerController::OnWPress()
 {
 	// set flag to keep updating destination until released
-	bMoveToMouseCursor = true;
+	acceleration.X += 50.0f;
 }
 
-void AOperationBigBangPlayerController::OnSetDestinationReleased()
+void AOperationBigBangPlayerController::OnSPress()
 {
 	// clear flag to indicate we should stop updating the destination
-	bMoveToMouseCursor = false;
+	acceleration.X -= 50.0f;
+}
+
+void AOperationBigBangPlayerController::OnAPress()
+{
+	// set flag to keep updating destination until released
+	acceleration.Y -= 50.0f;
+}
+
+void AOperationBigBangPlayerController::OnDPress()
+{
+	// clear flag to indicate we should stop updating the destination
+	acceleration.Y += 50.0f;
 }
