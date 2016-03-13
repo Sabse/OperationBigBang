@@ -16,4 +16,5 @@ AOperationBigBangGameMode::AOperationBigBangGameMode()
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
 	}
+	
 }
