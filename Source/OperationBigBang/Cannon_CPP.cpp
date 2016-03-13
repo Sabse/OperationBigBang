@@ -2,6 +2,7 @@
 
 #include "OperationBigBang.h"
 #include "Cannon_CPP.h"
+#include "OperationBigBangPlayerController.h"
 
 
 // Sets default values
@@ -16,7 +17,6 @@ ACannon_CPP::ACannon_CPP()
 void ACannon_CPP::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

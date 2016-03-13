@@ -23,6 +23,7 @@ protected:
 	/** Current acceleration of the crosshair. */
 	FVector2D acceleration = FVector2D(0.0f, 0.0f);
 
+
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;

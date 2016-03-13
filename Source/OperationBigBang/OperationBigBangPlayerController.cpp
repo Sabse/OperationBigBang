@@ -25,6 +25,7 @@ void AOperationBigBangPlayerController::PlayerTick(float DeltaTime)
 	APawn* const Pawn = GetPawn();
 	if (Pawn)
 	{
+		
 		FVector currentLocation = Pawn->GetActorLocation();
 		//fVelocity += fAcceleration * DeltaTime;
 		velocity.Y = acceleration.Y * DeltaTime;
