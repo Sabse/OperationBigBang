@@ -26,6 +26,7 @@ void AOperationBigBangPlayerController::PlayerTick(float DeltaTime)
 		velocity.Y = acceleration.Y * DeltaTime;
 		velocity.X = acceleration.X * DeltaTime;
 		currentLocation.X += velocity.X;
+		velocity.ClampAxes(-25.0f, 25.0f);
 		float halfHeight = (float)(maxHeight) / 2.0f;
 		if (currentLocation.X > mapLocation.X + halfHeight)
 		{
@@ -192,7 +193,7 @@ void AOperationBigBangPlayerController::dampenAcceleration()
 	}
 	else
 	{
-		acceleration.X *= 0.95;
+		acceleration.X *= 0.65f;
 	}
 	if (acceleration.Y <= 0.05f && acceleration.Y > -0.5f)
 	{
@@ -200,7 +201,7 @@ void AOperationBigBangPlayerController::dampenAcceleration()
 	}
 	else
 	{
-		acceleration.Y *= 0.95;
+		acceleration.Y *= 0.65;
 	}
 }
 

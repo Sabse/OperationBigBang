@@ -13,11 +13,11 @@ public:
 
 protected:
 	UPROPERTY(EditAnywhere)
-	uint32 maxWidth = 1860;
+	uint32 maxWidth = 3500;
 	UPROPERTY(EditAnywhere)
-	uint32 maxHeight = 950;
+	uint32 maxHeight = 1750;
 	UPROPERTY(EditAnywhere)
-	FVector mapLocation = FVector(575.0, 854.999023, 200.01);
+	FVector mapLocation = FVector(850.000000, 1024.000000, 200.01);
 	/** Stores the old angle of the left Thumbstick. */
 	FVector2D oldLeftThumbAngleVector = FVector2D(0.0f, 1.0f);
 	/** Stores the old angle of the right Thumbstick. */
