@@ -18,8 +18,6 @@ protected:
 	uint32 maxHeight = 950;
 	UPROPERTY(EditAnywhere)
 	FVector mapLocation = FVector(575.0, 854.999023, 200.01);
-	/** True if the controlled character should navigate to the mouse cursor. */
-	uint32 bMoveToMouseCursor : 1;
 	/** Stores the old angle of the left Thumbstick. */
 	FVector2D oldLeftThumbAngleVector = FVector2D(0.0f, 1.0f);
 	/** Stores the old angle of the right Thumbstick. */
@@ -29,17 +27,10 @@ protected:
 	/** Current acceleration of the crosshair. */
 	FVector2D acceleration = FVector2D(0.0f, 0.0f);
 
-
 	// Begin PlayerController interface
 	virtual void PlayerTick(float DeltaTime) override;
 	virtual void SetupInputComponent() override;
 	// End PlayerController interface
-
-	/** Navigate player to the current mouse cursor location. */
-	void MoveToMouseCursor();
-
-	/** Navigate player to the current touch location. */
-	void MoveToTouchLocation(const ETouchIndex::Type FingerIndex, const FVector Location);
 	
 	/** Navigate player to the given world location. */
 	void SetNewMoveDestination(const FVector DestLocation);
@@ -52,6 +43,7 @@ protected:
 
 	void dampenVelocity();
 	void dampenAcceleration();
+
 	/** Input handlers for SetDestination action. */
 	void OnWPress();
 	void OnSPress();
