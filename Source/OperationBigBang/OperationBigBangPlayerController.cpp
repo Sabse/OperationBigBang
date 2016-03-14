@@ -31,7 +31,35 @@ void AOperationBigBangPlayerController::PlayerTick(float DeltaTime)
 		velocity.Y = acceleration.Y * DeltaTime;
 		velocity.X = acceleration.X * DeltaTime;
 		currentLocation.X += velocity.X;
+		float halfHeight = (float)(maxHeight) / 2.0f;
+		if (currentLocation.X > mapLocation.X + halfHeight)
+		{
+			currentLocation.X = mapLocation.X + halfHeight;
+			velocity.X = 0.0f;
+			acceleration.X = 0.0f;
+		}
+		else if (currentLocation.X < mapLocation.X - halfHeight)
+		{
+			currentLocation.X = mapLocation.X - halfHeight;
+			velocity.X = 0.0f;
+			acceleration.X = 0.0f;
+		}
+		else{}
 		currentLocation.Y += velocity.Y;
+		float halfWidth = (float)(maxWidth) / 2.0f;
+		if (currentLocation.Y > mapLocation.Y + halfWidth)
+		{
+			currentLocation.Y = mapLocation.Y + halfWidth;
+			velocity.Y = 0.0f;
+			acceleration.Y = 0.0f;
+		}
+		else if (currentLocation.Y < mapLocation.Y - halfWidth)
+		{
+			currentLocation.Y = mapLocation.Y - halfWidth;
+			velocity.Y = 0.0f;
+			acceleration.Y = 0.0f;
+		}
+		else {}
 		Pawn->SetActorLocation(currentLocation);
 		dampenAcceleration();
 		dampenVelocity();

@@ -12,6 +12,12 @@ public:
 	AOperationBigBangPlayerController();
 
 protected:
+	UPROPERTY(EditAnywhere)
+	uint32 maxWidth = 1860;
+	UPROPERTY(EditAnywhere)
+	uint32 maxHeight = 950;
+	UPROPERTY(EditAnywhere)
+	FVector mapLocation = FVector(575.0, 854.999023, 200.01);
 	/** True if the controlled character should navigate to the mouse cursor. */
 	uint32 bMoveToMouseCursor : 1;
 	/** Stores the old angle of the left Thumbstick. */
